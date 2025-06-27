@@ -11,7 +11,7 @@ class CreateUser:
 
         access_token = json_response.get("accessToken")
 
-        return response.status_code, response.json(), access_token
+        return response.status_code, json_response, access_token
 
     @staticmethod
     def delete_create_user(token):
