@@ -12,4 +12,3 @@ def create_fake_password():
 def create_fake_name():
     fake = Faker()
     return fake.name()
-

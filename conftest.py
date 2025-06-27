@@ -18,4 +18,3 @@ def create_user():
         "payload": payload
     }
     CreateUser.delete_create_user(token)
-
