@@ -1,5 +1,5 @@
 import requests
-from data.endpoints import BASE_URL, CREATE_USER_URL, DELETE_USER_URL
+from data.endpoints import BASE_URL, CREATE_USER_URL, USER_URL
 
 
 class CreateUser:
@@ -15,6 +15,6 @@ class CreateUser:
 
     @staticmethod
     def delete_create_user(token):
-        headers = {"Authorization": f"Bearer {token}"}
-        response = requests.delete(f"{BASE_URL}{DELETE_USER_URL}", headers=headers)
+        headers = {"Authorization": token}
+        response = requests.delete(f"{BASE_URL}{USER_URL}", headers=headers)
         return response.status_code, response.json()
