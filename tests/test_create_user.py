@@ -8,20 +8,24 @@ from methods.create_user import CreateUser
 class TestCreateUser:
 
     @allure.title("Проверка успешного создания пользователя")
-    def test_create_user_successful(self, create_user):
+    def test_create_user_successful(self, user_payload, delete_user):
+        with allure.step("Создание пользователя"):
+            status_code, response_body, token = CreateUser.post_create_user(payload=user_payload)
+            delete_user.append(token)
         with allure.step("Проверка, что статус код: 200"):
-            assert create_user["status_code"] == 200
+            assert status_code == 200
         with allure.step("Проверка, что параметр 'success': True"):
-            assert create_user["response_body"]["success"] is True
+            assert response_body["success"] is True
         with allure.step("Проверка, что 'accessToken' присутствует в теле ответа"):
-            assert "accessToken" in create_user["response_body"]
+            assert "accessToken" in response_body
 
     @allure.title("Проверка создания пользователя с теми же данными")
-    def test_create_user_with_same_creds(self, create_user):
-        with allure.step("Запись использованных данных пользователя в переменную"):
-            payload = create_user["payload"]
+    def test_create_user_with_same_creds(self, user_payload, delete_user):
+        with allure.step("Создание пользователя"):
+            status_code, response_body, token = CreateUser.post_create_user(payload=user_payload)
+            delete_user.append(token)
         with allure.step("Регистрация пользователя с использованными данными"):
-            status_code, response_body, token = CreateUser.post_create_user(payload=payload)
+            status_code, response_body, token = CreateUser.post_create_user(payload=user_payload)
         with allure.step("Проверка, что статус код: 403"):
             assert status_code == 403
         with allure.step("Проверка, что параметр 'success': False"):

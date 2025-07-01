@@ -1,6 +1,7 @@
 import allure
 from data.messages import INCORRECT_EMAIL_OR_PASSWORD_MESSAGE
 from helper.helper_user import create_fake_password, create_fake_email
+from methods.create_user import CreateUser
 from methods.login_user import LoginUser
 
 
@@ -8,14 +9,12 @@ from methods.login_user import LoginUser
 class TestLoginUser:
 
     @allure.title("Проверка успешной авторизации пользователя")
-    def test_login_user_success(self, create_user):
-        with allure.step("Запись данных пользователя в переменную"):
-            payload = {
-                "email": create_user["payload"]["email"],
-                "password": create_user["payload"]["password"]
-            }
+    def test_login_user_success(self, user_payload, delete_user):
+        with allure.step("Создание пользователя"):
+            status_code, response_body, token = CreateUser.post_create_user(payload=user_payload)
+            delete_user.append(token)
         with allure.step("Авторизация пользователя"):
-            status_code, response_body, token = LoginUser.post_login_user(payload=payload)
+            status_code, response_body, token = LoginUser.post_login_user(payload=user_payload)
         with allure.step("Проверка, что статус код: 200"):
             assert status_code == 200
         with allure.step("Проверка, что параметр 'success': True"):

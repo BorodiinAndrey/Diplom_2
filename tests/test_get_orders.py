@@ -2,6 +2,7 @@ import allure
 from data.ingredients import INGREDIENTS, OTHER_INGREDIENTS
 from data.messages import AUTHORIZATION_FALSE_MESSAGE
 from methods.create_order import CreateOrder
+from methods.create_user import CreateUser
 from methods.get_orders import GetOrders
 from methods.login_user import LoginUser
 
@@ -10,14 +11,12 @@ from methods.login_user import LoginUser
 class TestGetOrders:
 
     @allure.title("Проверка получения заказов пользователя с токеном авторизации")
-    def test_get_user_orders_with_authorization(self, create_user):
-        with allure.step("Запись данных пользователя в переменную"):
-            payload = {
-                "email": create_user["payload"]["email"],
-                "password": create_user["payload"]["password"]
-            }
+    def test_get_user_orders_with_authorization(self, user_payload, delete_user):
+        with allure.step("Создание пользователя"):
+            status_code, response_body, token = CreateUser.post_create_user(payload=user_payload)
+            delete_user.append(token)
         with allure.step("Авторизация пользователя"):
-            _, _, token = LoginUser.post_login_user(payload=payload)
+            _, _, token = LoginUser.post_login_user(payload=user_payload)
         with allure.step("Создание первого заказа авторизованным пользователем"):
             CreateOrder.post_create_order(ingredients=INGREDIENTS, token=token)
         with allure.step("Создание второго заказа авторизованным пользователем"):
